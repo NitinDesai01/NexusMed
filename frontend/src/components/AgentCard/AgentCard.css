@@ -1,0 +1,172 @@
+.agent-card {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  border-left: 4px solid #9ca3af;
+  transition: all 0.2s ease;
+}
+
+.agent-card.active {
+  border-left-color: #22c55e;
+}
+
+.agent-card.inactive {
+  border-left-color: #9ca3af;
+}
+
+.agent-card.error {
+  border-left-color: #ef4444;
+}
+
+.agent-card.loading {
+  border-left-color: #f59e0b;
+  animation: pulse 2s infinite;
+}
+
+.agent-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.agent-card-icon {
+  font-size: 28px;
+}
+
+.agent-card-info {
+  flex: 1;
+}
+
+.agent-card-name {
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 16px;
+}
+
+.agent-card-description {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.agent-card-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.agent-card-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.agent-card-status-dot.active {
+  background: #22c55e;
+}
+
+.agent-card-status-dot.inactive {
+  background: #9ca3af;
+}
+
+.agent-card-status-dot.error {
+  background: #ef4444;
+}
+
+.agent-card-status-dot.loading {
+  background: #f59e0b;
+  animation: pulse 1s infinite;
+}
+
+.agent-card-status-text {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.agent-card-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.agent-card-metric {
+  text-align: center;
+}
+
+.agent-card-metric-label {
+  display: block;
+  font-size: 10px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.agent-card-metric-value {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-top: 2px;
+}
+
+.agent-card-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.agent-card-activate-btn {
+  flex: 1;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.agent-card-activate-btn.active {
+  background: #dcfce7;
+  color: #166534;
+  cursor: default;
+}
+
+.agent-card-activate-btn.inactive {
+  background: #2563eb;
+  color: white;
+}
+
+.agent-card-activate-btn.inactive:hover {
+  background: #1d4ed8;
+}
+
+.agent-card-details-btn {
+  padding: 6px 16px;
+  background: #f3f4f6;
+  color: #4b5563;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.agent-card-details-btn:hover {
+  background: #e5e7eb;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

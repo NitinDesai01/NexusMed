@@ -1,0 +1,191 @@
+.ambulance-tracker {
+  background: white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+.ambulance-tracker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.ambulance-tracker-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.ambulance-tracker-status {
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.ambulance-tracker-status.active {
+  color: #22c55e;
+}
+
+.ambulance-tracker-status.inactive {
+  color: #9ca3af;
+}
+
+.ambulance-list {
+  max-height: 300px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ambulance-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.ambulance-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ambulance-list::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+}
+
+.ambulance-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #f9fafb;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.ambulance-item:hover {
+  background: #f3f4f6;
+}
+
+.ambulance-item-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ambulance-item-icon {
+  font-size: 28px;
+}
+
+.ambulance-item-info {
+  flex: 1;
+}
+
+.ambulance-item-id {
+  font-weight: 500;
+  color: #1f2937;
+  font-size: 14px;
+}
+
+.ambulance-item-status {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.ambulance-item-status-badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+.ambulance-item-status-badge.available {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.ambulance-item-status-badge.busy {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.ambulance-item-status-badge.en-route {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.ambulance-item-distance {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.ambulance-item-eta {
+  font-size: 13px;
+  color: #2563eb;
+  font-weight: 500;
+}
+
+.ambulance-item-call-btn {
+  padding: 4px 12px;
+  background: #22c55e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.ambulance-item-call-btn:hover {
+  background: #16a34a;
+}
+
+.ambulance-no-data {
+  text-align: center;
+  padding: 32px 0;
+}
+
+.ambulance-no-data-text {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.ambulance-no-data-subtext {
+  font-size: 13px;
+  color: #9ca3af;
+  margin-top: 4px;
+}
+
+.ambulance-tracker-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.ambulance-tracker-location {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.ambulance-tracker-refresh {
+  padding: 4px 16px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.ambulance-tracker-refresh:hover {
+  background: #1d4ed8;
+}

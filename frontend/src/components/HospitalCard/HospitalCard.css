@@ -1,0 +1,142 @@
+.hospital-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+}
+
+.hospital-card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.hospital-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.hospital-card-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.hospital-card-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.hospital-card-stars {
+  color: #f59e0b;
+}
+
+.hospital-card-rating-value {
+  color: #4b5563;
+  font-size: 14px;
+}
+
+.hospital-card-emergency {
+  padding: 4px 12px;
+  background: #dc2626;
+  color: white;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  animation: pulse 2s infinite;
+}
+
+.hospital-card-address {
+  color: #4b5563;
+  font-size: 14px;
+}
+
+.hospital-card-location {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 2px;
+}
+
+.hospital-card-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 16px;
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.hospital-card-stat {
+  text-align: center;
+}
+
+.hospital-card-stat-label {
+  display: block;
+  font-size: 11px;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.hospital-card-stat-value {
+  display: block;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-top: 2px;
+}
+
+.hospital-card-stat-value.available {
+  color: #22c55e;
+}
+
+.hospital-card-stat-value.emergency {
+  color: #dc2626;
+}
+
+.hospital-card-specialties {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.hospital-card-specialties-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.hospital-card-specialties-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.hospital-card-specialty-tag {
+  padding: 2px 10px;
+  background: #eff6ff;
+  color: #2563eb;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@media (max-width: 640px) {
+  .hospital-card-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
