@@ -7,6 +7,7 @@ from routes.ambulance import bp as ambulance_bp
 from routes.community import bp as community_bp
 from routes.appointment import bp as appointment_bp
 from routes.dashboard import bp as dashboard_bp
+from routes.emergency import bp as emergency_bp
 
 __all__ = [
     "auth_bp",
@@ -17,5 +18,6 @@ __all__ = [
     "ambulance_bp",
     "community_bp",
     "appointment_bp",
-    "dashboard_bp"
+    "dashboard_bp",
+    "emergency_bp"
 ]
