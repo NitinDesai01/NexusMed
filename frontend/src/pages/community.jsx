@@ -49,24 +49,24 @@ const Community = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
-      <div className="glass-3d p-8">
+      <div className="card-modern">
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold text-white">🧠 Health Awareness</h1>
-          <p className="text-white/40 mt-1">Get AI-powered health information and awareness content</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800">🧠 Health Awareness</h1>
+          <p className="text-gray-500 mt-1">Get AI-powered health information and awareness content</p>
         </div>
       </div>
 
       {/* Search/Topic Input */}
-      <div className="glass-3d p-8">
+      <div className="card-modern">
         <div className="flex gap-4">
           <input
             type="text"
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
             placeholder="Enter a health topic (e.g., Diabetes, Heart Health)..."
-            className="input-3d flex-1"
+            className="input-field flex-1"
           />
           <button
             onClick={handleGetAwareness}
@@ -83,7 +83,7 @@ const Community = () => {
             <button
               key={t}
               onClick={() => setTopic(t)}
-              className="tag-3d tag-3d-blue text-sm"
+              className="tag tag-blue"
             >
               {t}
             </button>
@@ -91,7 +91,7 @@ const Community = () => {
         </div>
 
         {error && (
-          <div className="mt-4 p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400">
+          <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600">
             ❌ {error}
           </div>
         )}
@@ -99,21 +99,50 @@ const Community = () => {
 
       {/* Content Display */}
       {content && (
-        <div className="glass-3d p-8 animate-fade-in">
+        <div className="card-modern fade-in-up">
           <div className="flex items-center gap-3 mb-4">
-            <span className="text-2xl">📚</span>
-            <h2 className="text-xl font-bold text-white">{content.title || topic}</h2>
+            <span className="text-3xl">{content.icon || '📚'}</span>
+            <h2 className="text-xl font-bold text-gray-800">{content.title || topic}</h2>
           </div>
-          <div className="glass-light p-6 rounded-2xl">
-            <p className="text-white/80 leading-relaxed">{content.content}</p>
+
+          <div className="bg-gray-50 p-4 rounded-xl mb-4">
+            <p className="text-gray-700 leading-relaxed">{content.content}</p>
           </div>
-          {content.tips && (
-            <div className="mt-4">
-              <p className="text-white/60 text-sm font-medium mb-2">💡 Tips:</p>
+
+          {content.symptoms && content.symptoms !== "No specific symptoms listed" && (
+            <div className="mb-4">
+              <p className="text-sm font-medium text-gray-700 mb-2">Symptoms:</p>
+              <div className="bg-gray-50 p-3 rounded-xl">
+                <p className="text-gray-600">{content.symptoms}</p>
+              </div>
+            </div>
+          )}
+
+          {content.prevention && (
+            <div className="mb-4">
+              <p className="text-sm font-medium text-gray-700 mb-2">Prevention:</p>
+              <div className="bg-gray-50 p-3 rounded-xl">
+                <p className="text-gray-600">{content.prevention}</p>
+              </div>
+            </div>
+          )}
+
+          {content.risk_factors && content.risk_factors !== "Consult your doctor for personalized advice" && (
+            <div className="mb-4">
+              <p className="text-sm font-medium text-gray-700 mb-2">Risk Factors:</p>
+              <div className="bg-gray-50 p-3 rounded-xl">
+                <p className="text-gray-600">{content.risk_factors}</p>
+              </div>
+            </div>
+          )}
+
+          {content.tips && content.tips.length > 0 && (
+            <div>
+              <p className="text-sm font-medium text-gray-700 mb-2">💡 Tips:</p>
               <ul className="space-y-1">
                 {content.tips.map((tip, i) => (
-                  <li key={i} className="text-white/60 text-sm flex items-start gap-2">
-                    <span className="text-blue-400">•</span>
+                  <li key={i} className="text-gray-600 text-sm flex items-start gap-2">
+                    <span className="text-blue-500">•</span>
                     {tip}
                   </li>
                 ))}

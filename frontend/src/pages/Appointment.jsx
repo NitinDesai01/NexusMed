@@ -29,7 +29,7 @@ const Appointment = () => {
 
     try {
       const response = await fetch('http://localhost:5000/api/appointments/my-appointments', {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: 'Bearer ' + token }
       });
       const data = await response.json();
       if (response.ok) {
@@ -65,18 +65,18 @@ const Appointment = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          Authorization: 'Bearer ' + token
         },
         body: JSON.stringify({ symptoms: symptoms })
       });
 
       const data = await response.json();
 
-      if (response.ok && data.recommended_doctors?.length > 0) {
+      if (response.ok && data.recommended_doctors && data.recommended_doctors.length > 0) {
         setAnalysis(data.analysis);
         setDoctors(data.recommended_doctors);
         setStep(2);
-        setSuccess(`✅ Found ${data.recommended_doctors.length} doctor(s)`);
+        setSuccess('Found ' + data.recommended_doctors.length + ' doctor(s)');
         setError('');
       } else {
         setError(data.error || 'No doctors found. Try different symptoms.');
@@ -102,8 +102,8 @@ const Appointment = () => {
       const token = localStorage.getItem('token');
       try {
         const response = await fetch(
-          `http://localhost:5000/api/appointments/available-slots/${selectedDoctor.id}?date=${date}`,
-          { headers: { Authorization: `Bearer ${token}` } }
+          'http://localhost:5000/api/appointments/available-slots/' + selectedDoctor.id + '?date=' + date,
+          { headers: { Authorization: 'Bearer ' + token } }
         );
         const data = await response.json();
         if (response.ok) {
@@ -133,7 +133,7 @@ const Appointment = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          Authorization: 'Bearer ' + token
         },
         body: JSON.stringify({
           doctor_id: selectedDoctor.id,
@@ -149,7 +149,7 @@ const Appointment = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setSuccess('✅ Appointment booked successfully!');
+        setSuccess('Appointment booked successfully!');
         setStep(1);
         setSymptoms('');
         setSelectedDoctor(null);
@@ -173,14 +173,14 @@ const Appointment = () => {
     if (!token) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/appointments/cancel/${bookingId}`, {
+      const response = await fetch('http://localhost:5000/api/appointments/cancel/' + bookingId, {
         method: 'POST',
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: 'Bearer ' + token }
       });
 
       if (response.ok) {
         fetchMyAppointments();
-        setSuccess('✅ Appointment cancelled');
+        setSuccess('Appointment cancelled');
       }
     } catch (error) {
       console.error('Error:', error);
@@ -189,11 +189,10 @@ const Appointment = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      {/* Header */}
       <div className="card-modern">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">🤖 AI Appointment Agent</h1>
+            <h1 className="text-2xl font-bold text-gray-800">AI Appointment Agent</h1>
             <p className="text-gray-500 text-sm">Describe your symptoms and our AI will find the right doctor</p>
           </div>
           <div className="bg-gray-100 px-4 py-2 rounded-xl text-gray-600 text-sm font-medium">
@@ -203,17 +202,16 @@ const Appointment = () => {
       </div>
 
       {error && (
-        <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-600">❌ {error}</div>
+        <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-600">Error: {error}</div>
       )}
 
       {success && (
         <div className="p-4 bg-green-50 border border-green-200 rounded-xl text-green-700">{success}</div>
       )}
 
-      {/* Step 1: Describe Symptoms */}
       {step === 1 && (
         <div className="card-modern">
-          <h2 className="text-lg font-bold text-gray-800 mb-2">🩺 Describe Your Condition</h2>
+          <h2 className="text-lg font-bold text-gray-800 mb-2">Describe Your Condition</h2>
           <p className="text-gray-500 text-sm mb-4">Tell us about your symptoms. Our AI will find the best doctor.</p>
           <form onSubmit={handleFindDoctor}>
             <textarea
@@ -224,28 +222,22 @@ const Appointment = () => {
               rows="3"
             />
             <div className="flex flex-wrap gap-2 mt-3 mb-4">
-              {['Chest Pain', 'Headache', 'Knee Pain', 'Skin Rash', 'Anxiety'].map((tag) => (
-                <button
-                  key={tag}
-                  type="button"
-                  onClick={() => setSymptoms(`I have ${tag.toLowerCase()}`)}
-                  className="tag tag-blue"
-                >
-                  {tag}
-                </button>
-              ))}
+              <button type="button" onClick={() => setSymptoms('I have chest pain')} className="tag tag-blue">Chest Pain</button>
+              <button type="button" onClick={() => setSymptoms('I have severe headache')} className="tag tag-blue">Headache</button>
+              <button type="button" onClick={() => setSymptoms('I have knee pain')} className="tag tag-blue">Knee Pain</button>
+              <button type="button" onClick={() => setSymptoms('I have skin rash')} className="tag tag-blue">Skin Rash</button>
+              <button type="button" onClick={() => setSymptoms('I have anxiety')} className="tag tag-blue">Anxiety</button>
             </div>
             <button type="submit" disabled={loading || !symptoms.trim()} className="btn-3d w-full">
-              {loading ? '⏳ Analyzing...' : '🤖 Find Doctor'}
+              {loading ? 'Analyzing...' : 'Find Doctor'}
             </button>
           </form>
         </div>
       )}
 
-      {/* Step 2: Recommended Doctors */}
       {step === 2 && (
         <div className="card-modern">
-          <h2 className="text-lg font-bold text-gray-800 mb-3">👨‍⚕️ Recommended Doctors</h2>
+          <h2 className="text-lg font-bold text-gray-800 mb-3">Recommended Doctors</h2>
           {analysis && (
             <div className="bg-blue-50 p-3 rounded-xl text-sm text-blue-700 mb-4">
               <strong>AI Analysis:</strong> Based on "{analysis.symptoms}", we identified <strong>{analysis.identified_specialization}</strong>
@@ -255,23 +247,25 @@ const Appointment = () => {
             {doctors.map((doctor, index) => (
               <div
                 key={doctor.id}
-                className={`p-4 rounded-xl cursor-pointer border-2 transition-all ${
-                  selectedDoctor?.id === doctor.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-blue-300'
-                }`}
+                className="p-4 rounded-xl cursor-pointer border-2 transition-all"
+                style={{
+                  borderColor: selectedDoctor && selectedDoctor.id === doctor.id ? '#3b82f6' : '#e5e7eb',
+                  background: selectedDoctor && selectedDoctor.id === doctor.id ? '#eff6ff' : ''
+                }}
                 onClick={() => handleSelectDoctor(doctor)}
               >
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
                       <span className="font-semibold text-gray-800 text-lg">{doctor.name}</span>
-                      {index === 0 && <span className="badge badge-success text-xs">⭐ Best Match</span>}
+                      {index === 0 && <span className="badge badge-success text-xs">Best Match</span>}
                     </div>
                     <p className="text-blue-600 font-medium">{doctor.specialization}</p>
                     <p className="text-sm text-gray-500">{doctor.hospital}</p>
                     <div className="flex items-center gap-4 mt-1 text-sm">
-                      <span className="text-gray-600">⭐ {doctor.rating}</span>
+                      <span className="text-gray-600">Rating: {doctor.rating}</span>
                       <span className="text-gray-600">{doctor.experience} years</span>
-                      <span className="font-semibold text-green-600">₹{doctor.consultation_fee}</span>
+                      <span className="font-semibold text-green-600">Rs.{doctor.consultation_fee}</span>
                     </div>
                   </div>
                   <button onClick={() => handleSelectDoctor(doctor)} className="btn-3d text-sm py-2 px-4">
@@ -284,19 +278,18 @@ const Appointment = () => {
         </div>
       )}
 
-      {/* Step 3: Book Appointment */}
       {step === 3 && selectedDoctor && (
         <div className="card-modern">
-          <h2 className="text-lg font-bold text-gray-800 mb-3">📋 Book Appointment</h2>
+          <h2 className="text-lg font-bold text-gray-800 mb-3">Book Appointment</h2>
           <div className="bg-green-50 p-4 rounded-xl mb-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-semibold text-green-800 text-lg">{selectedDoctor.name}</p>
-                <p className="text-sm text-gray-600">{selectedDoctor.specialization} • {selectedDoctor.hospital}</p>
-                <p className="text-sm font-semibold text-green-700 mt-1">₹{selectedDoctor.consultation_fee}</p>
+                <p className="text-sm text-gray-600">{selectedDoctor.specialization} - {selectedDoctor.hospital}</p>
+                <p className="text-sm font-semibold text-green-700 mt-1">Rs.{selectedDoctor.consultation_fee}</p>
               </div>
               <button onClick={() => { setStep(2); setSelectedDoctor(null); }} className="text-sm text-blue-600 hover:text-blue-800">
-                ← Change
+                Change
               </button>
             </div>
           </div>
@@ -365,19 +358,18 @@ const Appointment = () => {
               </div>
             </div>
             <button type="submit" disabled={loading || !formData.time} className="btn-3d-success w-full mt-4">
-              {loading ? '⏳ Booking...' : '✅ Confirm & Book'}
+              {loading ? 'Booking...' : 'Confirm & Book'}
             </button>
           </form>
         </div>
       )}
 
-      {/* My Appointments */}
       <div className="card-modern">
-        <h2 className="text-lg font-bold text-gray-800 mb-3">📋 My Appointments</h2>
+        <h2 className="text-lg font-bold text-gray-800 mb-3">My Appointments</h2>
         {myAppointments.length === 0 ? (
           <p className="text-gray-500 text-sm text-center py-4">No appointments yet</p>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-3 max-h-[400px] overflow-y-auto">
             {myAppointments.map((appointment) => (
               <div key={appointment.booking_id} className="bg-gray-50 p-4 rounded-xl">
                 <div className="flex justify-between items-start">
@@ -385,9 +377,9 @@ const Appointment = () => {
                     <p className="font-semibold text-gray-800">{appointment.doctor_name}</p>
                     <p className="text-sm text-blue-600">{appointment.specialization}</p>
                     <p className="text-xs text-gray-500">{appointment.hospital}</p>
-                    <p className="text-sm font-medium mt-1">📅 {appointment.date} at {appointment.time}</p>
+                    <p className="text-sm font-medium mt-1">Date: {appointment.date} at {appointment.time}</p>
                   </div>
-                  <span className={`badge ${appointment.status === 'confirmed' ? 'badge-success' : 'badge-danger'}`}>
+                  <span className={'badge ' + (appointment.status === 'confirmed' ? 'badge-success' : 'badge-danger')}>
                     {appointment.status}
                   </span>
                 </div>
