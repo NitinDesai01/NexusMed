@@ -1,10 +1,11 @@
-﻿import React from 'react';
+﻿import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -12,39 +13,72 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white shadow-md fixed top-0 left-0 right-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-        <div className="flex items-center">
-          <Link to="/" className="flex items-center space-x-2 text-2xl font-bold text-blue-600">
-            <span>🏥</span>
-            <span className="hidden sm:inline">NexusMed</span>
-          </Link>
+    <nav className="navbar">
+      {/* Brand / Logo */}
+      <Link to="/" className="navbar-brand">
+        <span className="logo-icon">🏥</span>
+        <div>
+          <span className="logo-text">NexusMed</span>
+          <span className="logo-sub">AI Healthcare</span>
         </div>
+      </Link>
 
-        <div className="flex items-center space-x-4">
-          <Link to="/dashboard" className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-lg hover:bg-blue-50">Dashboard</Link>
-          <Link to="/symptoms" className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-lg hover:bg-blue-50">Symptoms</Link>
-          <Link to="/medicines" className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-lg hover:bg-blue-50">Medicines</Link>
-          <Link to="/hospitals" className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-lg hover:bg-blue-50">Hospitals</Link>
-          <Link to="/emergency" className="text-red-600 hover:text-red-700 px-3 py-2 rounded-lg hover:bg-red-50 font-semibold">🚑 Emergency</Link>
-          
-          {isAuthenticated ? (
-            <div className="flex items-center space-x-4">
-              <Link to="/profile" className="flex items-center space-x-2">
-                <span className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-semibold">
-                  {user?.name?.charAt(0) || 'U'}
-                </span>
-                <span className="hidden md:inline">{user?.name || 'User'}</span>
-              </Link>
-              <button onClick={handleLogout} className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">Logout</button>
-            </div>
-          ) : (
-            <div className="flex items-center space-x-4">
-              <Link to="/login" className="text-blue-600 hover:text-blue-700">Login</Link>
-              <Link to="/register" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Register</Link>
-            </div>
-          )}
-        </div>
+      {/* Navigation Links - Center */}
+      <div className="navbar-links">
+        <Link to="/dashboard">Dashboard</Link>
+        <Link to="/symptoms">Symptoms</Link>
+        <Link to="/appointment">Book Appointment</Link>
+        <Link to="/medicines">Medicines</Link>
+        <Link to="/community">Health Awareness</Link>
+        <Link to="/emergency" className="emergency-link">🚨 Emergency</Link>
+      </div>
+
+      {/* Right Side - User/Auth */}
+      <div className="navbar-right">
+        {isAuthenticated ? (
+          <>
+            <Link to="/profile" className="flex items-center gap-2">
+              <div className="user-avatar">{user?.name?.charAt(0) || 'U'}</div>
+              <span className="user-name hidden sm:block">{user?.name || 'User'}</span>
+            </Link>
+            <button onClick={handleLogout} className="btn-logout">
+              Logout
+            </button>
+          </>
+        ) : (
+          <>
+            <Link to="/login" className="btn-login">Login</Link>
+            <Link to="/register" className="btn-register">Register</Link>
+          </>
+        )}
+
+        {/* Mobile Menu Toggle */}
+        <button className="navbar-mobile-btn" onClick={() => setIsMobileOpen(!isMobileOpen)}>
+          {isMobileOpen ? '✕' : '☰'}
+        </button>
+      </div>
+
+      {/* Mobile Menu */}
+      <div className={`navbar-mobile-menu ${isMobileOpen ? 'open' : ''}`}>
+        <Link to="/dashboard" onClick={() => setIsMobileOpen(false)}>Dashboard</Link>
+        <Link to="/symptoms" onClick={() => setIsMobileOpen(false)}>Symptoms</Link>
+        <Link to="/appointment" onClick={() => setIsMobileOpen(false)}>Book Appointment</Link>
+        <Link to="/medicines" onClick={() => setIsMobileOpen(false)}>Medicines</Link>
+        <Link to="/community" onClick={() => setIsMobileOpen(false)}>Health Awareness</Link>
+        <Link to="/emergency" className="emergency-link" onClick={() => setIsMobileOpen(false)}>🚨 Emergency</Link>
+        {isAuthenticated ? (
+          <>
+            <Link to="/profile" onClick={() => setIsMobileOpen(false)}>Profile</Link>
+            <button onClick={handleLogout} style={{ width: '100%', textAlign: 'left', padding: '12px 16px', color: '#dc2626', background: 'none', border: 'none', fontSize: '14px', cursor: 'pointer' }}>
+              Logout
+            </button>
+          </>
+        ) : (
+          <>
+            <Link to="/login" onClick={() => setIsMobileOpen(false)}>Login</Link>
+            <Link to="/register" onClick={() => setIsMobileOpen(false)}>Register</Link>
+          </>
+        )}
       </div>
     </nav>
   );

@@ -1,9 +1,9 @@
 ﻿from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 import uuid
-import re
+from data_store import appointments_db, add_appointment, get_user_appointments
 
 bp = Blueprint("appointment", __name__, url_prefix="/api/appointments")
 logger = logging.getLogger(__name__)
@@ -14,216 +14,152 @@ doctors_db = [
         "id": 1,
         "name": "Dr. Rajesh Kumar",
         "specialization": "Cardiology",
-        "conditions": ["heart", "chest pain", "palpitations", "high blood pressure", "heart attack", "angina", "cardiac"],
+        "keywords": ["heart", "chest", "palpitations", "blood pressure", "cardiac", "angina", "heart attack", "breath", "shortness"],
         "hospital": "City General Hospital",
-        "hospital_id": 1,
         "experience": 15,
         "consultation_fee": 1500,
         "rating": 4.8,
-        "available_days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-        "available_time": "9:00 AM - 5:00 PM",
-        "education": "MBBS, MD - Cardiology",
-        "about": "Senior Cardiologist with 15 years of experience in treating heart conditions."
+        "available_days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
     },
     {
         "id": 2,
         "name": "Dr. Priya Sharma",
         "specialization": "Neurology",
-        "conditions": ["headache", "migraine", "dizziness", "seizure", "stroke", "brain", "nerve", "tremor", "memory loss"],
+        "keywords": ["headache", "migraine", "dizziness", "seizure", "stroke", "brain", "nerve", "tremor", "memory", "confusion", "faint"],
         "hospital": "Memorial Medical Center",
-        "hospital_id": 2,
         "experience": 12,
         "consultation_fee": 1800,
         "rating": 4.9,
-        "available_days": ["Monday", "Wednesday", "Friday"],
-        "available_time": "10:00 AM - 6:00 PM",
-        "education": "MBBS, MD - Neurology",
-        "about": "Specializes in neurological disorders and brain health."
+        "available_days": ["Monday", "Wednesday", "Friday"]
     },
     {
         "id": 3,
         "name": "Dr. Suresh Reddy",
         "specialization": "Orthopedics",
-        "conditions": ["bone", "joint pain", "back pain", "knee pain", "fracture", "arthritis", "spine", "sports injury"],
+        "keywords": ["bone", "joint", "knee", "fracture", "arthritis", "spine", "sports", "back", "hip", "shoulder", "ligament", "cartilage"],
         "hospital": "St. Mary's Hospital",
-        "hospital_id": 3,
         "experience": 10,
         "consultation_fee": 1200,
         "rating": 4.6,
-        "available_days": ["Tuesday", "Thursday", "Saturday"],
-        "available_time": "8:00 AM - 4:00 PM",
-        "education": "MBBS, MS - Orthopedics",
-        "about": "Expert in joint replacement and sports injuries."
+        "available_days": ["Tuesday", "Thursday", "Saturday"]
     },
     {
         "id": 4,
         "name": "Dr. Ananya Patel",
         "specialization": "Pediatrics",
-        "conditions": ["child", "baby", "fever", "cough", "cold", "vaccination", "growth", "development"],
+        "keywords": ["child", "baby", "fever", "cough", "cold", "vaccination", "growth", "development", "infant", "toddler", "teen"],
         "hospital": "Children's Hospital",
-        "hospital_id": 7,
         "experience": 8,
         "consultation_fee": 1000,
         "rating": 4.7,
-        "available_days": ["Monday", "Tuesday", "Thursday", "Friday"],
-        "available_time": "9:30 AM - 5:30 PM",
-        "education": "MBBS, MD - Pediatrics",
-        "about": "Dedicated to children's health and development."
+        "available_days": ["Monday", "Tuesday", "Thursday", "Friday"]
     },
     {
         "id": 5,
         "name": "Dr. Vikram Singh",
         "specialization": "Gastroenterology",
-        "conditions": ["stomach", "abdominal pain", "diarrhea", "constipation", "indigestion", "ulcer", "liver", "acid reflux"],
+        "keywords": ["stomach", "abdominal", "diarrhea", "constipation", "indigestion", "ulcer", "liver", "acid", "reflux", "gas", "bloating"],
         "hospital": "Regional Medical Center",
-        "hospital_id": 6,
         "experience": 14,
         "consultation_fee": 1600,
         "rating": 4.8,
-        "available_days": ["Monday", "Wednesday", "Friday", "Saturday"],
-        "available_time": "9:00 AM - 5:00 PM",
-        "education": "MBBS, DM - Gastroenterology",
-        "about": "Specializes in digestive system disorders and liver diseases."
+        "available_days": ["Monday", "Wednesday", "Friday", "Saturday"]
     },
     {
         "id": 6,
         "name": "Dr. Meera Iyer",
         "specialization": "Gynecology",
-        "conditions": ["pregnancy", "women", "menstrual", "ovary", "uterus", "fertility", "delivery", "pcod", "menopause"],
+        "keywords": ["pregnancy", "women", "menstrual", "ovary", "uterus", "fertility", "delivery", "pcod", "menopause", "period", "cramps"],
         "hospital": "Women's Health Center",
-        "hospital_id": 8,
         "experience": 11,
         "consultation_fee": 1300,
         "rating": 4.9,
-        "available_days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-        "available_time": "9:00 AM - 5:00 PM",
-        "education": "MBBS, MD - Gynecology",
-        "about": "Women's health specialist with expertise in pregnancy care."
+        "available_days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
     },
     {
         "id": 7,
         "name": "Dr. Arjun Nair",
         "specialization": "Dermatology",
-        "conditions": ["skin", "rash", "itch", "acne", "pimple", "eczema", "hair loss", "allergy", "scaly skin"],
+        "keywords": ["skin", "rash", "itch", "acne", "pimple", "eczema", "hair", "allergy", "scaly", "dry", "redness", "bumps"],
         "hospital": "City General Hospital",
-        "hospital_id": 1,
         "experience": 9,
         "consultation_fee": 1100,
         "rating": 4.5,
-        "available_days": ["Tuesday", "Thursday", "Saturday"],
-        "available_time": "10:00 AM - 6:00 PM",
-        "education": "MBBS, MD - Dermatology",
-        "about": "Expert in skin, hair, and nail disorders."
+        "available_days": ["Tuesday", "Thursday", "Saturday"]
     },
     {
         "id": 8,
         "name": "Dr. Deepak Gupta",
         "specialization": "Ophthalmology",
-        "conditions": ["eye", "vision", "blurred vision", "glaucoma", "cataract", "eye pain", "redness", "vision loss"],
+        "keywords": ["eye", "vision", "blurred", "glaucoma", "cataract", "redness", "sight", "blind", "double vision", "eye pain"],
         "hospital": "Memorial Medical Center",
-        "hospital_id": 2,
         "experience": 13,
         "consultation_fee": 1400,
         "rating": 4.7,
-        "available_days": ["Monday", "Wednesday", "Friday"],
-        "available_time": "9:00 AM - 5:00 PM",
-        "education": "MBBS, MS - Ophthalmology",
-        "about": "Specializes in eye care and vision correction."
+        "available_days": ["Monday", "Wednesday", "Friday"]
     },
     {
         "id": 9,
         "name": "Dr. Kavya Krishnan",
         "specialization": "Psychiatry",
-        "conditions": ["anxiety", "depression", "stress", "insomnia", "mental health", "panic", "mood", "behavior"],
+        "keywords": ["anxiety", "depression", "stress", "insomnia", "mental", "panic", "mood", "behavior", "sleep", "worry", "sad"],
         "hospital": "University Medical Center",
-        "hospital_id": 4,
         "experience": 10,
         "consultation_fee": 1700,
         "rating": 4.6,
-        "available_days": ["Monday", "Wednesday", "Thursday", "Friday"],
-        "available_time": "9:30 AM - 5:30 PM",
-        "education": "MBBS, MD - Psychiatry",
-        "about": "Mental health specialist focusing on anxiety and depression."
+        "available_days": ["Monday", "Wednesday", "Thursday", "Friday"]
     },
     {
         "id": 10,
         "name": "Dr. Ravi Desai",
         "specialization": "Cardiology",
-        "conditions": ["heart", "chest pain", "palpitations", "high blood pressure", "heart attack", "angina", "cardiac"],
+        "keywords": ["heart", "chest", "palpitations", "blood pressure", "cardiac", "angina", "heart attack", "breath", "shortness"],
         "hospital": "Cardiac Care Center",
-        "hospital_id": 10,
         "experience": 18,
         "consultation_fee": 2000,
         "rating": 4.9,
-        "available_days": ["Monday", "Tuesday", "Thursday", "Friday"],
-        "available_time": "8:00 AM - 4:00 PM",
-        "education": "MBBS, DM - Cardiology",
-        "about": "Senior interventional cardiologist with expertise in heart surgeries."
+        "available_days": ["Monday", "Tuesday", "Thursday", "Friday"]
     },
     {
         "id": 11,
         "name": "Dr. Lakshmi Narayanan",
         "specialization": "General Medicine",
-        "conditions": ["fever", "cough", "cold", "sore throat", "body pain", "infection", "general", "weakness"],
+        "keywords": ["fever", "cough", "cold", "sore", "throat", "body", "pain", "infection", "weakness", "flu", "viral"],
         "hospital": "Community Health Hospital",
-        "hospital_id": 5,
         "experience": 20,
         "consultation_fee": 800,
         "rating": 4.4,
-        "available_days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-        "available_time": "8:00 AM - 8:00 PM",
-        "education": "MBBS, MD - General Medicine",
-        "about": "Experienced general physician treating all common illnesses."
+        "available_days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
     },
     {
         "id": 12,
         "name": "Dr. Senthil Kumar",
         "specialization": "ENT",
-        "conditions": ["ear", "nose", "throat", "sore throat", "sinus", "hearing loss", "tonsillitis", "allergy", "breathing"],
+        "keywords": ["ear", "nose", "throat", "sinus", "hearing", "tonsillitis", "breathing", "snoring", "voice", "hoarseness"],
         "hospital": "St. Mary's Hospital",
-        "hospital_id": 3,
         "experience": 12,
         "consultation_fee": 1200,
         "rating": 4.6,
-        "available_days": ["Monday", "Wednesday", "Friday"],
-        "available_time": "9:00 AM - 5:00 PM",
-        "education": "MBBS, MS - ENT",
-        "about": "Specialist in ear, nose, and throat disorders."
+        "available_days": ["Monday", "Wednesday", "Friday"]
     }
 ]
 
-# Appointment bookings storage
-appointments_db = []
-
-# Condition to specialization mapping
-condition_to_specialization = {
-    "heart": "Cardiology", "chest pain": "Cardiology", "palpitations": "Cardiology",
-    "high blood pressure": "Cardiology", "heart attack": "Cardiology", "angina": "Cardiology",
+# Symptom to specialization mapping
+symptom_to_specialization = {
+    "chest": "Cardiology", "heart": "Cardiology", "palpitations": "Cardiology",
+    "blood pressure": "Cardiology", "angina": "Cardiology", "shortness of breath": "Cardiology",
     "headache": "Neurology", "migraine": "Neurology", "dizziness": "Neurology",
     "seizure": "Neurology", "stroke": "Neurology", "brain": "Neurology",
-    "nerve": "Neurology", "tremor": "Neurology", "memory loss": "Neurology",
-    "bone": "Orthopedics", "joint pain": "Orthopedics", "back pain": "Orthopedics",
-    "knee pain": "Orthopedics", "fracture": "Orthopedics", "arthritis": "Orthopedics",
-    "spine": "Orthopedics", "sports injury": "Orthopedics",
-    "child": "Pediatrics", "baby": "Pediatrics", "vaccination": "Pediatrics",
-    "growth": "Pediatrics", "development": "Pediatrics",
-    "stomach": "Gastroenterology", "abdominal pain": "Gastroenterology", "diarrhea": "Gastroenterology",
-    "constipation": "Gastroenterology", "indigestion": "Gastroenterology", "ulcer": "Gastroenterology",
-    "liver": "Gastroenterology", "acid reflux": "Gastroenterology",
-    "pregnancy": "Gynecology", "women": "Gynecology", "menstrual": "Gynecology",
-    "ovary": "Gynecology", "uterus": "Gynecology", "fertility": "Gynecology",
-    "delivery": "Gynecology", "pcod": "Gynecology", "menopause": "Gynecology",
+    "knee": "Orthopedics", "joint": "Orthopedics", "bone": "Orthopedics",
+    "fracture": "Orthopedics", "arthritis": "Orthopedics", "back": "Orthopedics",
     "skin": "Dermatology", "rash": "Dermatology", "itch": "Dermatology",
-    "acne": "Dermatology", "pimple": "Dermatology", "eczema": "Dermatology",
-    "hair loss": "Dermatology", "eye": "Ophthalmology", "vision": "Ophthalmology",
-    "blurred vision": "Ophthalmology", "glaucoma": "Ophthalmology", "cataract": "Ophthalmology",
-    "eye pain": "Ophthalmology", "anxiety": "Psychiatry", "depression": "Psychiatry",
-    "stress": "Psychiatry", "insomnia": "Psychiatry", "mental health": "Psychiatry",
-    "panic": "Psychiatry", "mood": "Psychiatry", "ear": "ENT", "nose": "ENT",
-    "throat": "ENT", "sinus": "ENT", "hearing loss": "ENT", "tonsillitis": "ENT",
-    "breathing": "ENT", "fever": "General Medicine", "cough": "General Medicine",
-    "cold": "General Medicine", "sore throat": "General Medicine", "body pain": "General Medicine",
-    "infection": "General Medicine", "weakness": "General Medicine",
+    "acne": "Dermatology", "eczema": "Dermatology", "hair": "Dermatology",
+    "anxiety": "Psychiatry", "depression": "Psychiatry", "stress": "Psychiatry",
+    "insomnia": "Psychiatry", "panic": "Psychiatry", "mood": "Psychiatry",
+    "stomach": "Gastroenterology", "abdominal": "Gastroenterology", "diarrhea": "Gastroenterology",
+    "constipation": "Gastroenterology", "ulcer": "Gastroenterology", "liver": "Gastroenterology",
+    "fever": "General Medicine", "cough": "General Medicine", "cold": "General Medicine",
+    "sore throat": "General Medicine", "body pain": "General Medicine", "infection": "General Medicine",
 }
 
 @bp.route("/find-doctor", methods=["POST"])
@@ -231,31 +167,45 @@ condition_to_specialization = {
 def find_doctor():
     try:
         data = request.get_json()
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
+        
         symptoms = data.get("symptoms", "").strip()
-        
         if not symptoms:
-            return jsonify({"error": "Please describe your symptoms"}), 400
+            return jsonify({"error": "Symptoms are required"}), 400
         
+        logger.info(f"Finding doctor for symptoms: {symptoms}")
         symptoms_lower = symptoms.lower()
-        matched_specializations = {}
         
-        for condition, specialization in condition_to_specialization.items():
-            if condition in symptoms_lower:
+        # Find matching specialization
+        matched_specializations = {}
+        for keyword, specialization in symptom_to_specialization.items():
+            if keyword in symptoms_lower:
                 matched_specializations[specialization] = matched_specializations.get(specialization, 0) + 1
         
-        if not matched_specializations:
-            matched_specializations = {"General Medicine": 1}
+        if matched_specializations:
+            best_specialization = max(matched_specializations, key=matched_specializations.get)
+        else:
+            best_specialization = "General Medicine"
         
-        best_specialization = max(matched_specializations, key=matched_specializations.get)
-        
+        # Find doctors with that specialization
         matched_doctors = []
         for doctor in doctors_db:
             if doctor["specialization"] == best_specialization:
                 score = 0
-                for condition in doctor.get("conditions", []):
-                    if condition in symptoms_lower:
-                        score += 1
-                matched_doctors.append({**doctor, "match_score": score})
+                for keyword in doctor.get("keywords", []):
+                    if keyword in symptoms_lower:
+                        score += 2
+                matched_doctors.append({
+                    "id": doctor["id"],
+                    "name": doctor["name"],
+                    "specialization": doctor["specialization"],
+                    "hospital": doctor["hospital"],
+                    "experience": doctor["experience"],
+                    "consultation_fee": doctor["consultation_fee"],
+                    "rating": doctor["rating"],
+                    "match_score": score
+                })
         
         matched_doctors.sort(key=lambda x: (x.get("match_score", 0), x["rating"]), reverse=True)
         
@@ -263,9 +213,9 @@ def find_doctor():
             "analysis": {
                 "symptoms": symptoms,
                 "identified_specialization": best_specialization,
-                "matched_conditions": list(matched_specializations.keys())
+                "confidence": len(matched_doctors) > 0
             },
-            "recommended_doctors": matched_doctors[:5],
+            "recommended_doctors": matched_doctors[:3],
             "message": f"We found {len(matched_doctors)} doctors for your condition"
         }), 200
         
@@ -278,6 +228,9 @@ def find_doctor():
 def book_appointment():
     try:
         data = request.get_json()
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
+        
         user_id = get_jwt_identity()
         
         patient_name = data.get("patient_name", "")
@@ -303,7 +256,7 @@ def book_appointment():
         if not doctor:
             return jsonify({"error": "Doctor not found"}), 404
         
-        # Check slot availability
+        # Check slot availability using shared appointments_db
         for appointment in appointments_db:
             if (appointment["doctor_id"] == doctor_id and 
                 appointment["date"] == date and 
@@ -330,7 +283,8 @@ def book_appointment():
             "booked_at": datetime.now().isoformat()
         }
         
-        appointments_db.append(booking)
+        # Use shared add_appointment function
+        add_appointment(booking)
         
         return jsonify({
             "message": "✅ Appointment booked successfully!",
@@ -345,7 +299,7 @@ def book_appointment():
 @jwt_required()
 def get_my_appointments():
     user_id = get_jwt_identity()
-    user_appointments = [a for a in appointments_db if a["user_id"] == user_id]
+    user_appointments = get_user_appointments(user_id)
     user_appointments.sort(key=lambda x: x["date"])
     return jsonify({"appointments": user_appointments}), 200
 
@@ -353,7 +307,7 @@ def get_my_appointments():
 @jwt_required()
 def cancel_appointment(booking_id):
     user_id = get_jwt_identity()
-    for i, appointment in enumerate(appointments_db):
+    for appointment in appointments_db:
         if appointment["booking_id"] == booking_id:
             if appointment["user_id"] != user_id:
                 return jsonify({"error": "Unauthorized"}), 403
@@ -388,3 +342,8 @@ def get_available_slots(doctor_id):
         "date": date,
         "available_slots": slots[:10]
     }), 200
+
+@bp.route("/doctors", methods=["GET"])
+@jwt_required()
+def get_doctors():
+    return jsonify({"doctors": doctors_db}), 200

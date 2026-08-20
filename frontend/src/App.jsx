@@ -15,6 +15,7 @@ import Hospitals from './pages/Hospitals';
 import Emergency from './pages/Emergency';
 import Profile from './pages/Profile';
 import Appointment from './pages/Appointment';
+import Community from './pages/Community';
 import './index.css';
 
 function App() {
@@ -24,7 +25,7 @@ function App() {
         <Router>
           <div className="app-container">
             <Navbar />
-            <div className="main-content">
+            <div className="flex">
               <Sidebar />
               <div className="page-content">
                 <Routes>
@@ -39,6 +40,7 @@ function App() {
                   <Route path="/emergency" element={<Emergency />} />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/appointment" element={<Appointment />} />
+                  <Route path="/community" element={<Community />} />
                   <Route path="*" element={<Navigate to="/" />} />
                 </Routes>
               </div>

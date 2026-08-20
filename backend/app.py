@@ -3,7 +3,7 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from config.config import Config
 from config.database import init_db
-from routes import auth, symptom, medicine, report, hospital, ambulance, community, appointment
+from routes import auth, symptom, medicine, report, hospital, ambulance, community, appointment, dashboard
 import os
 
 app = Flask(__name__)
@@ -23,6 +23,7 @@ app.register_blueprint(hospital.bp, url_prefix='/api/hospitals')
 app.register_blueprint(ambulance.bp, url_prefix='/api/ambulances')
 app.register_blueprint(community.bp, url_prefix='/api/community')
 app.register_blueprint(appointment.bp, url_prefix='/api/appointments')
+app.register_blueprint(dashboard.bp, url_prefix='/api/dashboard')  # Add this
 
 @app.route('/')
 def index():
@@ -37,7 +38,8 @@ def index():
             "/api/hospitals",
             "/api/ambulances",
             "/api/community",
-            "/api/appointments"
+            "/api/appointments",
+            "/api/dashboard"
         ]
     })
 
