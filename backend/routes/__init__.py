@@ -8,6 +8,7 @@ from routes.community import bp as community_bp
 from routes.appointment import bp as appointment_bp
 from routes.dashboard import bp as dashboard_bp
 from routes.emergency import bp as emergency_bp
+from routes.automated_agent import bp as automated_agent_bp
 
 __all__ = [
     "auth_bp",
@@ -19,5 +20,6 @@ __all__ = [
     "community_bp",
     "appointment_bp",
     "dashboard_bp",
-    "emergency_bp"
+    "emergency_bp",
+    "automated_agent_bp"
 ]

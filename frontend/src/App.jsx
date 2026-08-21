@@ -17,6 +17,7 @@ import Profile from './pages/Profile';
 import Appointment from './pages/Appointment';
 import Community from './pages/Community';
 import './index.css';
+import AutomatedAgent from './pages/AutomatedAgent';
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
                   <Route path="/appointment" element={<Appointment />} />
                   <Route path="/community" element={<Community />} />
                   <Route path="*" element={<Navigate to="/" />} />
+                  <Route path="/automated" element={<AutomatedAgent />} />
                 </Routes>
               </div>
             </div>

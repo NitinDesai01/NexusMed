@@ -5,6 +5,8 @@ from config.config import Config
 from config.database import init_db
 from routes import auth, symptom, medicine, report, hospital, ambulance, community, appointment, dashboard, emergency
 import os
+from routes import automated_agent
+from routes import auth, symptom, medicine, report, hospital, ambulance, community, appointment, dashboard, emergency, automated_agent
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -15,6 +17,7 @@ jwt = JWTManager(app)
 init_db(app)
 
 # Register blueprints
+app.register_blueprint(automated_agent.bp, url_prefix='/api/automated')
 app.register_blueprint(auth.bp, url_prefix='/api/auth')
 app.register_blueprint(symptom.bp, url_prefix='/api/symptoms')
 app.register_blueprint(medicine.bp, url_prefix='/api/medicines')

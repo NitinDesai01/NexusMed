@@ -16,6 +16,8 @@ const Sidebar = () => {
     { path: '/community', icon: '🧠', label: 'Health Awareness' },
     { path: '/emergency', icon: '🚨', label: 'Emergency' },
     { path: '/profile', icon: '👤', label: 'Profile' },
+    { path: '/automated', icon: '🤖', label: 'AI Assistant' },
+    
   ];
 
   const isActive = (path) => location.pathname === path;
